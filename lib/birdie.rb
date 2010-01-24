@@ -31,7 +31,7 @@ module Birdie
     end
     
     helpers do
-      attr_reader :book
+      attr_reader :book, :page
       
       def content
         return @content if defined?(@content)

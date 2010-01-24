@@ -16,6 +16,14 @@ module Birdie
       @book.path + "/#{ @position }"
     end
     
+    def next
+      @book.page_at(@position + 1)
+    end
+    
+    def previous
+      @book.page_at(@position - 1)
+    end
+    
   end
 end
 
