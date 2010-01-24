@@ -7,7 +7,10 @@ module Birdie
     
     def initialize(config)
       @config = config
-      @pages  = @config['pages'].map(&Page.method(:new))
+      @pages = []
+      @config['pages'].each_with_index do |page, i|
+        @pages << Page.new(self, page, i + 1)
+      end
     end
     
     def title

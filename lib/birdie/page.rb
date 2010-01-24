@@ -3,11 +3,17 @@ module Birdie
     
     ROUTE = Book::ROUTE + '/:id'
     
-    attr_reader :images
+    attr_reader :images, :position
     
-    def initialize(config)
-      @config = config
-      @images  = @config['images'].map(&Image.method(:new))
+    def initialize(book, config, position)
+      @book     = book
+      @config   = config
+      @images   = @config['images'].map(&Image.method(:new))
+      @position = position
+    end
+    
+    def path
+      @book.path + "/#{ @position }"
     end
     
   end

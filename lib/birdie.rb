@@ -24,6 +24,12 @@ module Birdie
       erb :page
     end
     
+    get Page::ROUTE do
+      @book = books.find { |b| b.slug == params[:slug] }
+      @page = @book.pages[params[:id].to_i - 1]
+      erb :page
+    end
+    
     helpers do
       attr_reader :book
       
@@ -42,8 +48,13 @@ module Birdie
         @book.pages
       end
       
-      def link_to(object)
-        "<a href=\"#{ object.path }\">#{ object.title }</a>"
+      def images
+        @page.images
+      end
+      
+      def link_to(object, link_text = nil)
+        class_name = [@book, @page].include?(object) ? 'current' : ''
+        "<a href=\"#{ object.path }\" class=\"#{ class_name }\">#{ link_text || object.title }</a>"
       end
       
       def image_tag(image)
