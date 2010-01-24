@@ -8,7 +8,9 @@ module Birdie
     VIEW_DIR     = File.join(APP_DIR, 'views')
     CONTENT_FILE = File.join(APP_DIR, 'content.yml')
     
-    autoload :Book, File.dirname(__FILE__) + '/birdie/book'
+    require File.dirname(__FILE__) + '/birdie/book'
+    require File.dirname(__FILE__) + '/birdie/page'
+    require File.dirname(__FILE__) + '/birdie/image'
     
     set :static, true
     set :public, PUBLIC_DIR
@@ -16,7 +18,15 @@ module Birdie
     
     get('/') { erb :index }
     
+    get Book::ROUTE do
+      @book = books.find { |b| b.slug == params[:slug] }
+      @page = @book.pages.first
+      erb :page
+    end
+    
     helpers do
+      attr_reader :book
+      
       def content
         return @content if defined?(@content)
         @content = YAML.load(File.read(CONTENT_FILE))
@@ -28,8 +38,16 @@ module Birdie
         content['books']
       end
       
+      def pages
+        @book.pages
+      end
+      
       def link_to(object)
         "<a href=\"#{ object.path }\">#{ object.title }</a>"
+      end
+      
+      def image_tag(image)
+        "<img src=\"#{ image.path }\">"
       end
     end
     

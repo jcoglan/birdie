@@ -1,11 +1,13 @@
 module Birdie
   class Book
     
-    ROUTE = '/book/:slug'
+    ROUTE = '/books/:slug'
+    
+    attr_reader :pages
     
     def initialize(config)
       @config = config
-      p config
+      @pages  = @config['pages'].map(&Page.method(:new))
     end
     
     def title
