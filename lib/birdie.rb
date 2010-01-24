@@ -17,6 +17,7 @@ module Birdie
     set :views,  VIEW_DIR
     
     get('/') { erb :index }
+    ['', '/'].each { |trailer| get("/books#{trailer}") { redirect '/' } }
     
     get Book::ROUTE do
       @book = books.find { |b| b.slug == params[:slug] }
