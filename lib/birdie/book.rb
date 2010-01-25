@@ -21,7 +21,7 @@ module Birdie
     end
     
     def slug
-      @slug ||= title.downcase.strip.gsub(/\s+/, '-').gsub(/[^a-z0-9-]/, '')
+      @slug ||= @config['slug'] || title.downcase.strip.gsub(/\s+/, '-').gsub(/[^a-z0-9-]/, '')
     end
     
     def path
