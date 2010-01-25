@@ -1,5 +1,10 @@
 require 'sinatra'
 require 'yaml'
+require 'forwardable'
+
+%w[book page image].each do |klass|
+  require File.dirname(__FILE__) + '/birdie/' + klass
+end
 
 module Birdie
   class Application < Sinatra::Base
@@ -7,10 +12,6 @@ module Birdie
     PUBLIC_DIR   = File.join(APP_DIR, 'public')
     VIEW_DIR     = File.join(APP_DIR, 'views')
     CONTENT_FILE = File.join(APP_DIR, 'content.yml')
-    
-    require File.dirname(__FILE__) + '/birdie/book'
-    require File.dirname(__FILE__) + '/birdie/page'
-    require File.dirname(__FILE__) + '/birdie/image'
     
     set :static, true
     set :public, PUBLIC_DIR
@@ -34,23 +35,16 @@ module Birdie
     helpers do
       attr_reader :book, :page
       
+      extend Forwardable
+      def_delegator :book, :pages
+      def_delegator :page, :images
+      
       def content
-        return @content if defined?(@content)
-        @content = YAML.load(File.read(CONTENT_FILE))
-        @content['books'].map!(&Book.method(:new))
-        @content
+        @content ||= YAML.load(File.read(CONTENT_FILE))
       end
       
       def books
-        content['books']
-      end
-      
-      def pages
-        @book.pages
-      end
-      
-      def images
-        @page.images
+        @books ||= content['books'].map(&Book.method(:new))
       end
       
       def link_to(object, link_text = nil)

@@ -3,14 +3,17 @@ module Birdie
     
     ROUTE = '/books/:slug'
     
-    attr_reader :pages
-    
     def initialize(config)
       @config = config
+    end
+    
+    def pages
+      return @pages if defined?(@pages)
       @pages = []
       @config['pages'].each_with_index do |page, i|
         @pages << Page.new(self, page, i + 1)
       end
+      @pages
     end
     
     def title
