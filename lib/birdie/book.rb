@@ -30,8 +30,8 @@ module Birdie
     
     def page_at(position)
       position -= 1
-      position -= @pages.size if position >= @pages.size
-      @pages[position]
+      position -= pages.size if position >= pages.size
+      pages[position]
     end
     
   end

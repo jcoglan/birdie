@@ -22,13 +22,13 @@ module Birdie
     
     get Book::ROUTE do
       @book = books.find { |b| b.slug == params[:slug] }
-      @page = @book.pages.first
+      @page = @book.page_at(1)
       erb :page
     end
     
     get Page::ROUTE do
       @book = books.find { |b| b.slug == params[:slug] }
-      @page = @book.pages[params[:id].to_i - 1]
+      @page = @book.page_at(params[:id].to_i)
       erb :page
     end
     
