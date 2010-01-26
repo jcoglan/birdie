@@ -3,10 +3,13 @@
    <channel>
       <title><%= feed['title'] %></title>
       <link><%= domain %></link>
+      <language><%= feed['language'] || 'en-us' %></language>
 <% if description = feed['description'] -%>
       <description><%= description %></description>
 <% end -%>
-      <language><%= feed['language'] || 'en-us' %></language>
+<% if copyright = feed['copyright'] -%>
+      <copyright><%= copyright %></copyright>
+<% end -%>
 <% feed['items'].each do |item| -%>
       <item>
          <title><%= rss_title_for item %></title>
