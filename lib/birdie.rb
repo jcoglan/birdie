@@ -69,6 +69,11 @@ module Birdie
       def image_tag(image)
         "<img src=\"#{ image.path }\">"
       end
+      
+      def rss_feed_link(url = FEED_ROUTE)
+        return "" unless File.file?(FEED_FILE)
+        "<link rel=\"alternate\" title=\"RSS\" type=\"application/rss+xml\" href=\"#{ url }\">"
+      end
     end
     
     module RssHelper
@@ -79,11 +84,6 @@ module Birdie
       def rss_object_for(item)
         return books.find { |b| b.slug == item['book'] } if item['book']
         nil
-      end
-      
-      def rss_feed_link
-        return "" unless File.file?(FEED_FILE)
-        "<link rel=\"alternate\" title=\"RSS\" type=\"application/rss+xml\" href=\"#{ FEED_ROUTE }\">"
       end
       
       def rss_title_for(item)
