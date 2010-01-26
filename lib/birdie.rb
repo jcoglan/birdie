@@ -9,9 +9,13 @@ end
 module Birdie
   class Application < Sinatra::Base
     
-    PUBLIC_DIR   = File.join(APP_DIR, 'public')
-    VIEW_DIR     = File.join(APP_DIR, 'views')
-    CONTENT_FILE = File.join(APP_DIR, 'content.yml')
+    PUBLIC_DIR    = File.join(APP_DIR, 'public')
+    VIEW_DIR      = File.join(APP_DIR, 'views')
+    CONTENT_FILE  = File.join(APP_DIR, 'content.yml')
+    FEED_FILE     = File.join(APP_DIR, 'feed.yml')
+    
+    FEED_ROUTE    = '/feed.xml'
+    FEED_TEMPLATE = File.join(File.dirname(__FILE__), 'feed.erb')
     
     set :static, true
     set :public, PUBLIC_DIR
@@ -21,15 +25,25 @@ module Birdie
     ['', '/'].each { |trailer| get("/books#{trailer}") { redirect '/' } }
     
     get Book::ROUTE do
+      # TODO handle missing book
       @book = books.find { |b| b.slug == params[:slug] }
       @page = @book.page_at(1)
       erb :page
     end
     
     get Page::ROUTE do
+      # TODO handle missing book/page
       @book = books.find { |b| b.slug == params[:slug] }
       @page = @book.page_at(params[:id].to_i)
       erb :page
+    end
+    
+    get FEED_ROUTE do
+      # TODO handle missing feed
+      extend(RssHelper)
+      feed = YAML.load(File.read(FEED_FILE))
+      template = ERB.new(File.read(FEED_TEMPLATE), nil, '-')
+      template.result(binding)
     end
     
     helpers do
@@ -54,6 +68,38 @@ module Birdie
       
       def image_tag(image)
         "<img src=\"#{ image.path }\">"
+      end
+    end
+    
+    module RssHelper
+      def domain
+        "#{ request.scheme }://#{ request.host }"
+      end
+      
+      def rss_object_for(item)
+        return books.find { |b| b.slug == item['book'] } if item['book']
+        nil
+      end
+      
+      def rss_feed_link
+        return "" unless File.file?(FEED_FILE)
+        "<link rel=\"alternate\" title=\"RSS\" type=\"application/rss+xml\" href=\"#{ FEED_ROUTE }\">"
+      end
+      
+      def rss_title_for(item)
+        item['title'] || rss_object_for(item).title
+      end
+      
+      def rss_link_for(item)
+        domain + ( item['link'] || rss_object_for(item).path )
+      end
+      
+      def rss_description_for(item)
+        item['description'] || rss_object_for(item).title
+      end
+      
+      def rss_date_for(item)
+        item['date'].strftime('%a, %d %b %Y 00:00:00 GMT')
       end
     end
     

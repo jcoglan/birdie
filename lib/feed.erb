@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+   <channel>
+      <title><%= feed['title'] %></title>
+      <link><%= domain %></link>
+<% if description = feed['description'] -%>
+      <description><%= description %></description>
+<% end -%>
+      <language><%= feed['language'] || 'en-us' %></language>
+<% feed['items'].each do |item| -%>
+      <item>
+         <title><%= rss_title_for item %></title>
+         <link><%= rss_link_for item %></link>
+         <description><%= rss_description_for item %></description>
+         <pubDate><%= rss_date_for item %></pubDate>
+         <guid isPermalink="true"><%= rss_link_for item %></guid>
+      </item>
+<% end -%>
+   </channel>
+</rss>
+
