@@ -24,6 +24,10 @@ module Birdie
       @slug ||= @config['slug'] || title.downcase.strip.gsub(/\s+/, '-').gsub(/[^a-z0-9-]/, '')
     end
     
+    def directory
+      @config['directory'] || '.'
+    end
+    
     def path
       "/books/#{ slug }"
     end

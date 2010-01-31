@@ -12,7 +12,7 @@ module Birdie
     end
     
     def images
-      @images ||= @config['images'].map(&Image.method(:new))
+      @images ||= @config['images'].map { |img| Image.new(File.join(@book.directory, img)) }
     end
     
     def path
