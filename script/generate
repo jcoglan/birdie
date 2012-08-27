@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+require 'yaml'
+
+dir   = File.expand_path(ARGV.first)
+files = Dir.entries(dir) - %w[. ..]
+
+data = [
+  {
+    'title'     => File.basename(dir),
+    'slug'      => File.basename(dir),
+    'directory' => File.basename(dir),
+    'pages'     => files.sort.map { |f| {'images' => File.basename(f) } }
+  }
+]
+
+puts YAML.dump(data)
+
