@@ -2,20 +2,22 @@ require 'sinatra'
 require 'yaml'
 require 'forwardable'
 
-%w[book page image].each do |klass|
-  require File.dirname(__FILE__) + '/birdie/' + klass
-end
-
 module Birdie
+  ROOT = File.expand_path('..', __FILE__)
+  autoload :Book,  ROOT + '/birdie/book'
+  autoload :Page,  ROOT + '/birdie/page'
+  autoload :Image, ROOT + '/birdie/image'
+
   class Application < Sinatra::Base
     
+    APP_DIR       = File.expand_path(ENV['APP_DIR'])
     PUBLIC_DIR    = File.join(APP_DIR, 'public')
     VIEW_DIR      = File.join(APP_DIR, 'views')
     CONTENT_FILE  = File.join(APP_DIR, 'content.yml')
     FEED_FILE     = File.join(APP_DIR, 'feed.yml')
     
     FEED_ROUTE    = '/feed.xml'
-    FEED_TEMPLATE = File.join(File.dirname(__FILE__), 'feed.erb')
+    FEED_TEMPLATE = File.expand_path('../feed.erb', __FILE__)
     
     set :static, true
     set :public, PUBLIC_DIR
@@ -54,7 +56,7 @@ module Birdie
       def_delegator :page, :images
       
       def content
-        @content ||= YAML.load(File.read(CONTENT_FILE))
+        @content ||= YAML.load_file(CONTENT_FILE)
       end
       
       def books
